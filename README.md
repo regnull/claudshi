@@ -1,6 +1,6 @@
 # Claudshi
 
-A plugin for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and [Claude Desktop](https://claude.ai/download) that predicts political events using [Kalshi](https://kalshi.com/) prediction markets.
+A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin that predicts political events using [Kalshi](https://kalshi.com/) prediction markets.
 
 Claudshi connects to Kalshi via the [kalshi-mcp](https://github.com/regnull/kalshi-mcp) MCP server to scan markets, analyze political events, estimate probabilities, place bets on mispriced markets, and monitor open positions.
 
