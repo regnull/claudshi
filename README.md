@@ -16,7 +16,7 @@ Claudshi connects to Kalshi via the [kalshi-mcp](https://github.com/regnull/kals
 1. **Install kalshi-mcp:**
 
    ```bash
-   go install github.com/regnull/kalshi-mcp@latest
+   pip install git+https://github.com/regnull/kalshi-mcp.git
    ```
 
 2. **Configure API credentials** in `.mcp.json`:
