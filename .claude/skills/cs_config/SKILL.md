@@ -1,5 +1,5 @@
 ---
-name: config
+name: cs_config
 description: View or update Claudshi plugin settings (risk limits, edge thresholds, categories). Use when managing configuration.
 disable-model-invocation: true
 argument-hint: "[key value | reset]"

@@ -1,5 +1,5 @@
 ---
-name: monitor
+name: cs_monitor
 description: Check all tracked markets for updates — fetches latest data, performs incremental analysis, and recommends actions for positions and watchlist.
 disable-model-invocation: true
 allowed-tools: Read Write Bash Glob Grep WebSearch WebFetch mcp__kalshi-mcp__get_market mcp__kalshi-mcp__get_event mcp__kalshi-mcp__get_markets mcp__kalshi-mcp__get_market_orderbook mcp__kalshi-mcp__get_trades mcp__kalshi-mcp__get_market_candlesticks mcp__kalshi-mcp__get_positions mcp__kalshi-mcp__get_balance mcp__kalshi-mcp__lookup_event
@@ -94,11 +94,19 @@ Make calls in parallel where possible:
 2. **`get_market_orderbook`** with the ticker — current bid/ask depth.
 3. **`get_trades`** with the ticker (limit 20) — recent trade activity.
 
+#### Kalshi API field reference
+
+Market objects use these field names:
+- `last_price_dollars` — last trade price as string, e.g. `"0.5600"` (dollar amount 0–1, NOT cents)
+- `yes_bid_dollars` / `yes_ask_dollars` — best bid/ask as strings
+- `volume_fp` — volume as string, e.g. `"352983.55"`
+- `status` — one of: `active`, `inactive`, `finalized`
+
 From the market response, extract:
-- `current_price_cents`: the `last_price` field.
-- `market_probability`: `last_price / 100`.
-- `status`: whether the market is still active.
-- `volume`: current volume.
+- `current_price_cents`: `int(float(last_price_dollars) * 100)`
+- `market_probability`: `float(last_price_dollars)` — already in 0–1 range
+- `status`: whether the market is still active
+- `volume`: `int(float(volume_fp))`
 
 Compare to the stored `market.yaml` data to detect price movements.
 
@@ -313,13 +321,13 @@ write_yaml(market_dir / "market.yaml", market_meta)
 
 ### Step 8: Write Daily Journal Entry
 
-Generate a daily journal entry summarizing all monitoring findings. Save to `.claudshi/cs_journal/<YYYY-MM-DD>.md`:
+Generate a daily journal entry summarizing all monitoring findings. Save to `.claudshi/journal/<YYYY-MM-DD>.md`:
 
 ```python
 from memory import write_md
 from pathlib import Path
 
-journal_dir = Path(".claudshi/cs_journal")
+journal_dir = Path(".claudshi/journal")
 journal_dir.mkdir(parents=True, exist_ok=True)
 journal_path = journal_dir / f"{today}.md"
 
@@ -402,7 +410,7 @@ Display the full monitoring report to the user. Structure:
 - <TICKER>: No material changes. Hold / Watch.
 
 ---
-*Journal entry saved to `.claudshi/cs_journal/<date>.md`*
+*Journal entry saved to `.claudshi/journal/<date>.md`*
 *Next monitor recommended in <monitor_interval_hours> hours.*
 ```
 

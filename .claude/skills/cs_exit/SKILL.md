@@ -1,5 +1,5 @@
 ---
-name: exit
+name: cs_exit
 description: Close or reduce a position on a political prediction market. Calculates realized P&L, requires user confirmation, and updates all memory files.
 disable-model-invocation: true
 argument-hint: "<ticker> [amount]"
@@ -95,11 +95,19 @@ Call these MCP tools in parallel:
 2. **`get_market_orderbook`** with the ticker — current bid/ask depth.
 3. **`get_balance`** — current account balance.
 
-From the market data, extract:
-- `current_yes_price`: the market's last trade price (in cents)
-- `market_status`: must be `open` or `active`
+#### Kalshi API field reference
 
-If the market is not open/active, report the error and stop.
+Market objects use these field names:
+- `last_price_dollars` — last trade price as string, e.g. `"0.5600"` (dollar amount 0–1, NOT cents)
+- `yes_bid_dollars` / `yes_ask_dollars` — best bid/ask as strings
+- `no_bid_dollars` / `no_ask_dollars` — best NO bid/ask as strings
+- `status` — one of: `active`, `inactive`, `finalized`
+
+From the market data, extract:
+- `current_yes_price_cents`: `int(float(last_price_dollars) * 100)` — convert to cents
+- `market_status`: must be `active`
+
+If the market is not active, report the error and stop.
 
 ---
 
@@ -212,14 +220,32 @@ from formatting import usd_cents_to_display
 
 ### Step 6: Execute the Exit
 
-Only after the user confirms, place the exit order:
+Only after the user confirms, place the exit order.
+
+**IMPORTANT: Always use `order_type: "limit"`.** The Kalshi API returns 400 Bad Request for `order_type: "market"`. Use the orderbook-derived exit price from Step 4 as the limit price.
 
 Call **`create_order`** with:
-- `ticker`: the market ticker
-- `action`: `sell`
-- `side`: same side as the position (`yes` or `no`, lowercase)
-- `type`: `market`
-- `count`: `exit_quantity` (number of contracts to sell)
+- `ticker`: the market ticker (string)
+- `action`: `"sell"` (string)
+- `side`: same side as the position (`"yes"` or `"no"`, lowercase)
+- `order_type`: `"limit"` (ALWAYS — never use `"market"`)
+- `count`: `exit_quantity` (integer, number of contracts to sell)
+- `yes_price`: exit price in cents (integer) — use for **YES side** positions
+- `no_price`: exit price in cents (integer) — use for **NO side** positions
+
+**Only set the price field matching the side.** For YES positions, set `yes_price`. For NO positions, set `no_price`.
+
+Example for selling a NO position at 56 cents:
+```
+create_order(
+    ticker="KXABRAHAMSA-29-JAN20",
+    action="sell",
+    side="no",
+    order_type="limit",
+    count=6,
+    no_price=56
+)
+```
 
 If the order fails, display the error and stop. Do NOT update memory files.
 
@@ -363,7 +389,7 @@ if remaining_quantity == 0:
 
 #### 8.4 Update Portfolio Summary
 
-Update `.claudshi/cs_portfolio/summary.yaml`:
+Update `.claudshi/portfolio/summary.yaml` (note: `portfolio/`, NOT `cs_portfolio/`):
 
 ```python
 summary = load_portfolio_summary()
@@ -414,9 +440,12 @@ After all memory files are updated, display:
 ## Important Notes
 
 - **NEVER auto-execute exits.** Always wait for explicit user confirmation before calling `create_order`.
+- **ALWAYS use `order_type: "limit"`.** The Kalshi API returns 400 Bad Request for `order_type: "market"`. Derive the exit price from the orderbook.
 - **Require existing position.** If no position exists for this ticker, stop immediately with a clear error.
 - **Handle both full and partial exits.** Default to full exit when no amount is specified.
 - **Log everything.** Every exit must be recorded in trades.yaml, position.yaml, actions_log.yaml, and portfolio summary.
 - **Handle errors gracefully.** If the order fails, display the error clearly and do not update memory files.
 - **Mark closed positions.** When a position is fully closed, set `quantity` to 0, add `closed_at` timestamp, and log a `position_closed` action.
 - **Preserve avg price on partial exit.** When partially exiting, the remaining position keeps the same average entry price.
+- **Price fields are dollar strings.** `last_price_dollars`, `yes_bid_dollars`, etc. are strings in 0–1 range, NOT cents. Convert with `int(float(x) * 100)`.
+- **Portfolio path is `.claudshi/portfolio/`**, not `.claudshi/cs_portfolio/`.
