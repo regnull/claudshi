@@ -1,5 +1,5 @@
 ---
-name: journal
+name: cs_journal
 description: View or generate a daily journal entry summarizing positions, actions, market movements, and observations.
 disable-model-invocation: true
 argument-hint: "[date]"
@@ -45,7 +45,7 @@ And stop.
 
 ### Step 2: Read Mode — Display Existing Journal
 
-Read the journal file from `.claudshi/cs_journal/<YYYY-MM-DD>.md`:
+Read the journal file from `.claudshi/journal/<YYYY-MM-DD>.md`:
 
 ```python
 import sys; sys.path.insert(0, "lib")
@@ -53,7 +53,7 @@ from memory import read_md
 from pathlib import Path
 
 date_str = "<DATE_ARG>"
-journal_path = Path(".claudshi/cs_journal") / f"{date_str}.md"
+journal_path = Path(".claudshi/journal") / f"{date_str}.md"
 content = read_md(journal_path)
 ```
 
@@ -256,14 +256,14 @@ Build the journal markdown using this template:
 
 ### Step 5: Save the Journal Entry
 
-Save to `.claudshi/cs_journal/<YYYY-MM-DD>.md`:
+Save to `.claudshi/journal/<YYYY-MM-DD>.md`:
 
 ```python
 from memory import write_md, ensure_dirs
 from pathlib import Path
 
 ensure_dirs()
-journal_dir = Path(".claudshi/cs_journal")
+journal_dir = Path(".claudshi/journal")
 journal_dir.mkdir(parents=True, exist_ok=True)
 journal_path = journal_dir / f"{today}.md"
 
@@ -290,7 +290,7 @@ After the journal, add a footer:
 
 ```
 ---
-*Journal saved to `.claudshi/cs_journal/<YYYY-MM-DD>.md`*
+*Journal saved to `.claudshi/journal/<YYYY-MM-DD>.md`*
 ```
 
 ---
@@ -312,7 +312,7 @@ The full output should follow this structure:
 <generated journal content>
 
 ---
-*Journal saved to `.claudshi/cs_journal/<YYYY-MM-DD>.md`*
+*Journal saved to `.claudshi/journal/<YYYY-MM-DD>.md`*
 ```
 
 ## Important Notes

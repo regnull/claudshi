@@ -1,5 +1,5 @@
 ---
-name: bet
+name: cs_bet
 description: Place a trade on a political prediction market. Validates risk limits, requires prior analysis, and waits for user confirmation before executing.
 disable-model-invocation: true
 argument-hint: "<ticker> <side> <amount> [price]"
@@ -17,7 +17,7 @@ allowed-tools: Read Write Bash mcp__kalshi-mcp__get_market mcp__kalshi-mcp__get_
 - `ticker`: Market ticker (e.g., `KXUSAIRANAGREEMENT-27`)
 - `side`: `YES` or `NO`
 - `amount`: Amount to risk in USD (e.g., `25`)
-- `price`: Optional limit price in cents (1-99). If omitted, uses a market order.
+- `price`: Optional limit price in cents (1-99). If omitted, the best available price from the orderbook is used.
 
 Examples:
 ```
@@ -40,7 +40,7 @@ Parse the arguments: `<ticker> <side> <amount> [price]`
 1. **Ticker**: Required. Must be a non-empty string.
 2. **Side**: Required. Must be `YES` or `NO` (case-insensitive). Normalize to uppercase.
 3. **Amount**: Required. Must be a positive number (USD). Convert to cents internally: `amount_cents = int(amount * 100)`.
-4. **Price**: Optional. If provided, must be an integer between 1 and 99 (cents). This is the limit price. If omitted, this is a market order.
+4. **Price**: Optional. If provided, must be an integer between 1 and 99 (cents). This is the limit price. If omitted, the price will be derived from the orderbook in Step 3.
 
 If any input is invalid or missing, show usage help and stop.
 
@@ -102,12 +102,32 @@ Call these MCP tools in parallel:
 3. **`get_balance`** — gets current account balance.
 4. **`get_positions`** — gets all current open positions.
 
-From the market data, extract:
-- `market_probability`: `last_price / 100`
-- `expiration_time`: the market's expiration timestamp
-- `market_status`: must be `open` or `active`
+#### Kalshi API field reference
 
-If the market is not open/active, report the error and stop.
+Market objects returned by `get_market` use these field names:
+- `last_price_dollars` — last trade price as string, e.g. `"0.5600"` (this is a dollar amount 0–1, NOT cents)
+- `yes_bid_dollars` / `yes_ask_dollars` — best bid/ask as strings
+- `no_bid_dollars` / `no_ask_dollars` — best NO bid/ask as strings
+- `volume_fp` — volume as string, e.g. `"352983.55"`
+- `expiration_time` — ISO 8601 timestamp
+- `status` — one of: `active`, `inactive`, `finalized`
+
+From the market data, extract:
+- `market_probability`: `float(last_price_dollars)` — already in 0–1 range
+- `last_price_cents`: `int(float(last_price_dollars) * 100)` — convert to cents for formatting helpers
+- `expiration_time`: the market's expiration timestamp
+- `market_status`: must be `active`
+
+If the market is not active, report the error and stop.
+
+#### Derive price if not specified
+
+If the user did not provide a `price` argument, derive an aggressive limit price from the orderbook to get an immediate (or near-immediate) fill:
+
+- **For YES side**: Use the best ask price (lowest ask) from the orderbook. Convert: `price_cents = int(float(yes_ask_dollars) * 100)`.
+- **For NO side**: Use the best NO ask price, or equivalently `100 - int(float(yes_bid_dollars) * 100)`. The `no_price` in cents = `int(float(no_ask_dollars) * 100)` if available, otherwise `100 - int(float(yes_bid_dollars) * 100)`.
+
+If the orderbook is empty, use the last trade price as a fallback and warn the user about low liquidity.
 
 ---
 
@@ -185,7 +205,7 @@ Display a confirmation that includes:
 
 ### Order Details
 - **Side**: <YES/NO>
-- **Type**: <Market / Limit @ XX cents>
+- **Type**: Limit @ <XX> cents
 - **Amount**: $<XX.XX>
 - **Quantity**: <calculated contracts> contracts
 - **Estimated Cost**: $<XX.XX>
@@ -203,9 +223,8 @@ Display a confirmation that includes:
 ```
 
 Calculate quantity (number of contracts):
-- For YES side: `quantity = amount_cents / price_cents` (rounded down)
-- For NO side: `quantity = amount_cents / (100 - price_cents)` (rounded down)
-- If no price specified (market order), use the best ask (for YES) or best bid complement (for NO) from the orderbook.
+- For YES side: `quantity = amount_cents // price_cents` (integer division, rounded down). The `price_cents` is the YES price.
+- For NO side: `quantity = amount_cents // no_price_cents` (integer division, rounded down). The `no_price_cents` is the NO price (i.e., `100 - yes_price_cents`, or the user-specified price, or the orderbook-derived NO price from Step 3).
 
 **CRITICAL: Wait for the user to explicitly type "yes" or confirm.** Do NOT auto-execute. Do NOT proceed without confirmation.
 
@@ -213,28 +232,34 @@ Calculate quantity (number of contracts):
 
 ### Step 6: Execute the Trade
 
-Only after the user confirms, place the order:
+Only after the user confirms, place the order.
 
-```python
-# Use create_order MCP tool with:
-# - ticker: <ticker>
-# - side: "yes" or "no"
-# - action: "buy"
-# - type: "market" or "limit"
-# - count: <quantity>  (number of contracts)
-# - yes_price or no_price: <price in cents> (for limit orders)
+**IMPORTANT: Always use `order_type: "limit"`.** The Kalshi API does not reliably support `order_type: "market"` — it returns a **400 Bad Request** error. Always use limit orders, even when the user doesn't specify a price (use the orderbook-derived price from Step 3).
+
+Call **`create_order`** with these parameters:
+- `ticker`: the market ticker (string)
+- `action`: `"buy"` (string)
+- `side`: `"yes"` or `"no"` (lowercase string)
+- `order_type`: `"limit"` (ALWAYS — never use `"market"`)
+- `count`: number of contracts (integer, from Step 5)
+- `yes_price`: limit price in cents (integer, 1-99) — use for **YES side** orders
+- `no_price`: limit price in cents (integer, 1-99) — use for **NO side** orders
+
+**Only set the price field matching the side.** For YES orders, set `yes_price` only. For NO orders, set `no_price` only. Do not set both.
+
+Example for a NO side order at 44 cents:
+```
+create_order(
+    ticker="KXABRAHAMSA-29-JAN20",
+    action="buy",
+    side="no",
+    order_type="limit",
+    count=113,
+    no_price=44
+)
 ```
 
-Call **`create_order`** with the appropriate parameters:
-- `ticker`: the market ticker
-- `action`: `buy`
-- `side`: `yes` or `no` (lowercase)
-- `type`: `market` if no price given, `limit` if price specified
-- `count`: number of contracts (quantity calculated in Step 5)
-- For limit orders on YES side: set `yes_price` to the limit price in cents
-- For limit orders on NO side: set `no_price` to the limit price in cents
-
-If the order fails, display the error and stop.
+If the order fails, display the error and stop. Do NOT update memory files on failure.
 
 ---
 
@@ -361,7 +386,7 @@ write_yaml(market_dir / "actions_log.yaml", log_data)
 
 #### 8.4 Update Portfolio Summary
 
-Update `.claudshi/cs_portfolio/summary.yaml`:
+Update `.claudshi/portfolio/summary.yaml` (note: `portfolio/`, NOT `cs_portfolio/`):
 
 ```python
 summary = load_portfolio_summary()
@@ -413,8 +438,11 @@ After all memory files are updated, display:
 ## Important Notes
 
 - **NEVER auto-execute trades.** Always wait for explicit user confirmation before calling `create_order`.
+- **ALWAYS use `order_type: "limit"`.** The Kalshi API returns 400 Bad Request for `order_type: "market"`. When the user omits a price, derive it from the orderbook.
 - **Require prior analysis.** If no `probability.yaml` exists for the market, block the trade and tell the user to run `/cs_analyze` first.
 - **Enforce all risk rules.** Hard-block on expiry and bet limit violations. Warn on concentration and edge threshold.
 - **Log everything.** Every trade must be recorded in trades.yaml, position.yaml, actions_log.yaml, and portfolio summary.
 - **Handle errors gracefully.** If the order fails, display the error clearly and do not update memory files.
 - **Idempotent memory updates.** If re-running after a partial failure, check existing state before writing.
+- **Price fields are dollar strings.** `last_price_dollars`, `yes_bid_dollars`, etc. are strings in 0–1 range (e.g. `"0.56"`), NOT cents. Convert to cents with `int(float(x) * 100)`.
+- **Portfolio path is `.claudshi/portfolio/`**, not `.claudshi/cs_portfolio/`. The `save_portfolio_summary()` helper writes to the correct path automatically.

@@ -1,5 +1,5 @@
 ---
-name: portfolio
+name: cs_portfolio
 description: View current portfolio positions, P&L, cash balance, and exposure metrics. Fetches live data from Kalshi and updates local memory.
 disable-model-invocation: true
 argument-hint: ""
@@ -117,7 +117,7 @@ After displaying the portfolio, update the memory system.
 
 #### 5.1 Update Portfolio Summary
 
-Write to `.claudshi/cs_portfolio/summary.yaml`:
+Write to `.claudshi/portfolio/summary.yaml`:
 
 ```python
 import sys; sys.path.insert(0, "lib")
@@ -154,7 +154,7 @@ save_portfolio_summary(summary)
 
 #### 5.2 Append Balance Log
 
-Append a snapshot to `.claudshi/cs_portfolio/balance_log.csv`:
+Append a snapshot to `.claudshi/portfolio/balance_log.csv`:
 
 ```python
 from memory import append_balance_log
@@ -221,3 +221,6 @@ The full output should follow this structure:
 - **All monetary values in memory are in USD cents (integers).** Display values use `$X.XX` format.
 - **Update memory on every invocation.** The portfolio snapshot is useful for tracking P&L over time via `balance_log.csv`.
 - **Identify stale data.** Cross-referencing local and remote state helps keep the memory system accurate.
+- **Price fields are dollar strings.** `last_price_dollars` from `get_market` is a string in 0–1 range (e.g. `"0.56"`), NOT cents. Convert with `int(float(x) * 100)`.
+- **Position data from Kalshi.** `position_fp` is a string like `"-6.00"` (negative = NO contracts). `total_cost_dollars` and `market_exposure_dollars` are dollar strings.
+- **Portfolio paths are `.claudshi/portfolio/`**, not `.claudshi/cs_portfolio/`. The helper functions in `lib/memory.py` write to the correct paths automatically.

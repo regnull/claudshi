@@ -1,5 +1,5 @@
 ---
-name: analyze
+name: cs_analyze
 description: Deep analysis of a political market — fetches data, researches the event, estimates probabilities, and recommends a trade action.
 disable-model-invocation: true
 argument-hint: "<market-url-or-ticker>"
@@ -51,9 +51,27 @@ Call these MCP tools to gather all market data. Make calls in parallel where pos
 
 If any call fails, note the failure and continue with available data.
 
+#### Kalshi API field reference
+
+Market objects returned by `get_market` use these field names:
+- `last_price_dollars` — last trade price as string, e.g. `"0.5600"` (this is a dollar amount in 0–1 range, NOT cents)
+- `yes_bid_dollars` / `yes_ask_dollars` — best bid/ask as strings
+- `no_bid_dollars` / `no_ask_dollars` — best NO bid/ask as strings
+- `volume_fp` — volume as string, e.g. `"352983.55"`
+- `open_interest_fp` — open interest as string
+- `expiration_time` — ISO 8601 timestamp
+- `status` — one of: `active`, `inactive`, `finalized`
+- `rules_primary` — resolution rules text
+
+**Price conversion:** `float(last_price_dollars)` gives the market-implied YES probability directly (already 0–1). To get cents for formatting helpers: `int(float(last_price_dollars) * 100)`.
+
+#### Candlestick data caveat
+
+The `get_market_candlesticks` response may have candles with missing price fields (e.g. `close_dollars` may be null/missing for periods with no trades). Always use `.get('close_dollars', None)` with a fallback, and skip candles with missing data.
+
 From the market data, extract:
 - `event_slug`: derive from the event ticker (lowercase, hyphenated). Use the event ticker as-is if it looks like a slug, otherwise convert to lowercase with hyphens.
-- `market_probability`: the market-implied YES probability = `last_price / 100` (Kalshi prices are in cents 0–99).
+- `market_probability`: `float(last_price_dollars)` — already in 0–1 range.
 
 ---
 
@@ -341,3 +359,5 @@ save_watchlist(watchlist)
 - **Be calibrated.** Avoid overconfidence. Use base rates. Assign confidence levels honestly.
 - **Show your work.** Every probability comes with structured reasoning.
 - **Cite sources.** List the news articles and data you consulted.
+- **Price fields are dollar strings.** `last_price_dollars` is a string like `"0.56"` (0–1 range), NOT cents. Convert with `float()` for probability or `int(float(x) * 100)` for cents.
+- **Candlestick data may have gaps.** Candles for periods with no trades can have null/missing price fields. Always use `.get()` with fallbacks.
