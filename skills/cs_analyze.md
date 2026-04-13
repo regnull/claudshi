@@ -1,20 +1,20 @@
-# /analyze — Deep Political Event Analysis
+# /cs_analyze — Deep Political Event Analysis
 
 ## Usage
 
 ```
-/analyze <market-url-or-ticker>
+/cs_analyze <market-url-or-ticker>
 ```
 
 Examples:
 ```
-/analyze KXUSAIRANAGREEMENT-27
-/analyze https://kalshi.com/markets/kxusairanagreement/us-iran-agreement
+/cs_analyze KXUSAIRANAGREEMENT-27
+/cs_analyze https://kalshi.com/markets/kxusairanagreement/us-iran-agreement
 ```
 
 ## Instructions
 
-When the user invokes `/analyze`, follow **every** step below in order. Do not skip steps.
+When the user invokes `/cs_analyze`, follow **every** step below in order. Do not skip steps.
 
 ---
 
@@ -127,7 +127,7 @@ Display:
 
 ## Important Notes
 
-- **Never place trades from this skill.** Only recommend. User must use `/bet` to execute.
+- **Never place trades from this skill.** Only recommend. User must use `/cs_bet` to execute.
 - **Always save all memory files** before presenting the summary.
 - **Be calibrated.** Use base rates. Avoid overconfidence.
 - **Show your work.** Structured reasoning for every estimate.

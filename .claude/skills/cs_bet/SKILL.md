@@ -6,12 +6,12 @@ argument-hint: "<ticker> <side> <amount> [price]"
 allowed-tools: Read Write Bash mcp__kalshi-mcp__get_market mcp__kalshi-mcp__get_market_orderbook mcp__kalshi-mcp__get_positions mcp__kalshi-mcp__get_balance mcp__kalshi-mcp__create_order mcp__kalshi-mcp__get_fills mcp__kalshi-mcp__get_orders
 ---
 
-# /bet — Place a Trade
+# /cs_bet — Place a Trade
 
 ## Usage
 
 ```
-/bet <ticker> <side> <amount> [price]
+/cs_bet <ticker> <side> <amount> [price]
 ```
 
 - `ticker`: Market ticker (e.g., `KXUSAIRANAGREEMENT-27`)
@@ -21,15 +21,15 @@ allowed-tools: Read Write Bash mcp__kalshi-mcp__get_market mcp__kalshi-mcp__get_
 
 Examples:
 ```
-/bet KXUSAIRANAGREEMENT-27 YES 25
-/bet KXUSAIRANAGREEMENT-27 NO 10 35
+/cs_bet KXUSAIRANAGREEMENT-27 YES 25
+/cs_bet KXUSAIRANAGREEMENT-27 NO 10 35
 ```
 
 ## Instructions
 
 The user's arguments: $ARGUMENTS
 
-When the user invokes `/bet`, follow **every** step below in order. Do not skip steps.
+When the user invokes `/cs_bet`, follow **every** step below in order. Do not skip steps.
 
 ---
 
@@ -77,7 +77,7 @@ if event_slug is None:
 ```
 
 If no analysis exists for this ticker:
-- Display an error: "No analysis found for `<ticker>`. Run `/analyze <ticker>` first to generate a probability estimate before placing a bet."
+- Display an error: "No analysis found for `<ticker>`. Run `/cs_analyze <ticker>` first to generate a probability estimate before placing a bet."
 - **Stop here.** Do not proceed.
 
 If analysis exists, load the probability estimate:
@@ -85,7 +85,7 @@ If analysis exists, load the probability estimate:
 probability_data = read_yaml(market_dir / "probability.yaml")
 ```
 
-If `probability.yaml` is empty or missing `current_estimate`, tell the user to run `/analyze` first and stop.
+If `probability.yaml` is empty or missing `current_estimate`, tell the user to run `/cs_analyze` first and stop.
 
 Extract:
 - `claude_probability`: from `probability_data["current_estimate"]["yes_probability"]`
@@ -361,7 +361,7 @@ write_yaml(market_dir / "actions_log.yaml", log_data)
 
 #### 8.4 Update Portfolio Summary
 
-Update `.claudshi/portfolio/summary.yaml`:
+Update `.claudshi/cs_portfolio/summary.yaml`:
 
 ```python
 summary = load_portfolio_summary()
@@ -404,8 +404,8 @@ After all memory files are updated, display:
 - **Total Cost**: $<XX.XX>
 
 ### Next Steps
-- Run `/portfolio` to see your full portfolio
-- Run `/monitor` to track this market
+- Run `/cs_portfolio` to see your full portfolio
+- Run `/cs_monitor` to track this market
 ```
 
 ---
@@ -413,7 +413,7 @@ After all memory files are updated, display:
 ## Important Notes
 
 - **NEVER auto-execute trades.** Always wait for explicit user confirmation before calling `create_order`.
-- **Require prior analysis.** If no `probability.yaml` exists for the market, block the trade and tell the user to run `/analyze` first.
+- **Require prior analysis.** If no `probability.yaml` exists for the market, block the trade and tell the user to run `/cs_analyze` first.
 - **Enforce all risk rules.** Hard-block on expiry and bet limit violations. Warn on concentration and edge threshold.
 - **Log everything.** Every trade must be recorded in trades.yaml, position.yaml, actions_log.yaml, and portfolio summary.
 - **Handle errors gracefully.** If the order fails, display the error clearly and do not update memory files.

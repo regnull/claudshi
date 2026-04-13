@@ -1,9 +1,9 @@
-# /bet — Place a Trade
+# /cs_bet — Place a Trade
 
 ## Usage
 
 ```
-/bet <ticker> <side> <amount> [price]
+/cs_bet <ticker> <side> <amount> [price]
 ```
 
 - `ticker`: Market ticker (e.g., `KXUSAIRANAGREEMENT-27`)
@@ -13,13 +13,13 @@
 
 Examples:
 ```
-/bet KXUSAIRANAGREEMENT-27 YES 25
-/bet KXUSAIRANAGREEMENT-27 NO 10 35
+/cs_bet KXUSAIRANAGREEMENT-27 YES 25
+/cs_bet KXUSAIRANAGREEMENT-27 NO 10 35
 ```
 
 ## Instructions
 
-When the user invokes `/bet`, follow **every** step below in order. Do not skip steps.
+When the user invokes `/cs_bet`, follow **every** step below in order. Do not skip steps.
 
 ---
 
@@ -41,7 +41,7 @@ If any input is invalid or missing, show usage help and stop.
 Check that an analysis and probability estimate exist for this market in the `.claudshi/` memory tree.
 
 - Scan `.claudshi/events/*/markets/<ticker>/probability.yaml` to find the market.
-- If no analysis exists, display an error telling the user to run `/analyze <ticker>` first.
+- If no analysis exists, display an error telling the user to run `/cs_analyze <ticker>` first.
 - If analysis exists, load the probability estimate (current `yes_probability` and `confidence`).
 
 ---
@@ -112,14 +112,14 @@ After successful execution, update:
 
 ### Step 9: Present Execution Summary
 
-Display the trade result: ticker, side, quantity, price, cost, order ID, and updated position. Suggest next steps (`/portfolio`, `/monitor`).
+Display the trade result: ticker, side, quantity, price, cost, order ID, and updated position. Suggest next steps (`/cs_portfolio`, `/cs_monitor`).
 
 ---
 
 ## Important Notes
 
 - **NEVER auto-execute trades.** Always wait for explicit user confirmation.
-- **Require prior analysis.** No `probability.yaml` = no trade. User must run `/analyze` first.
+- **Require prior analysis.** No `probability.yaml` = no trade. User must run `/cs_analyze` first.
 - **Enforce all risk rules.** Hard-block on critical violations, warn on soft violations.
 - **Log everything.** Every trade must be recorded in memory.
 - **Handle errors gracefully.** If the order fails, do not update memory files.

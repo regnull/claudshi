@@ -1,15 +1,25 @@
-# /scan — Scan for Mispriced Political Markets
+---
+name: scan
+description: Scan political prediction markets for mispriced opportunities. Fetches events, estimates probabilities, and ranks by edge.
+disable-model-invocation: true
+argument-hint: "[category]"
+allowed-tools: Read Write Bash WebSearch WebFetch mcp__kalshi-mcp__get_events mcp__kalshi-mcp__get_event mcp__kalshi-mcp__get_markets mcp__kalshi-mcp__get_market mcp__kalshi-mcp__get_market_orderbook mcp__kalshi-mcp__get_trades
+---
+
+# /cs_scan — Scan for Mispriced Political Markets
 
 ## Usage
 
 ```
-/scan                  # Scan all default categories
-/scan <category>       # Scan a specific category (e.g. politics, elections)
+/cs_scan                  # Scan all default categories
+/cs_scan <category>       # Scan a specific category (e.g. politics, elections)
 ```
 
 ## Instructions
 
-When the user invokes `/scan`, follow **every** step below in order. Do not skip steps.
+The user's arguments: $ARGUMENTS
+
+When the user invokes `/cs_scan`, follow **every** step below in order. Do not skip steps.
 
 ---
 
@@ -55,7 +65,7 @@ If there are many markets (more than 30), prioritize by volume (highest volume f
 
 ### Step 4: Rapid Assessment
 
-For each candidate market, perform a lightweight assessment. This is intentionally faster and less thorough than a full `/analyze` — the goal is to quickly identify markets worth a deeper look.
+For each candidate market, perform a lightweight assessment. This is intentionally faster and less thorough than a full `/cs_analyze` — the goal is to quickly identify markets worth a deeper look.
 
 #### 4.1 Fetch Market Data
 
@@ -161,24 +171,24 @@ for result in flagged_results:
 save_watchlist(watchlist)
 ```
 
-Tell the user how many markets were added to the watchlist, and suggest using `/analyze <ticker>` for a deep dive on the most promising ones.
+Tell the user how many markets were added to the watchlist, and suggest using `/cs_analyze <ticker>` for a deep dive on the most promising ones.
 
 ---
 
 ### Step 7: Next Steps
 
 After presenting results, suggest next actions:
-- **For top opportunities**: "Run `/analyze <ticker>` for a full analysis before trading."
-- **For monitoring**: "Run `/monitor` to track watchlisted markets."
-- **For different categories**: "Run `/scan <category>` to scan a specific category."
+- **For top opportunities**: "Run `/cs_analyze <ticker>` for a full analysis before trading."
+- **For monitoring**: "Run `/cs_monitor` to track watchlisted markets."
+- **For different categories**: "Run `/cs_scan <category>` to scan a specific category."
 
 ---
 
 ## Important Notes
 
-- **This is a scan, not a full analysis.** Probability estimates here are rough. Always run `/analyze` before trading.
+- **This is a scan, not a full analysis.** Probability estimates here are rough. Always run `/cs_analyze` before trading.
 - **Never place trades from this skill.** Only identify opportunities.
 - **Be calibrated.** Even in quick estimates, use base rates and avoid overconfidence.
 - **Save to watchlist.** Every flagged market gets added for tracking.
-- **Keep it fast.** Limit web searches and avoid deep research — that's what `/analyze` is for.
+- **Keep it fast.** Limit web searches and avoid deep research — that's what `/cs_analyze` is for.
 - **Handle API errors gracefully.** If an event or market fetch fails, skip it and continue.

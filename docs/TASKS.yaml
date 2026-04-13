@@ -32,68 +32,68 @@ tasks:
     completed_at: "2026-04-12T21:45:00Z"
     notes: ""
   - id: 5
-    name: "/config skill"
+    name: "/cs_config skill"
     status: completed
     depends_on: [2]
     started_at: "2026-04-12T22:00:00Z"
     completed_at: "2026-04-12T22:10:00Z"
-    notes: "Created skills/config.md and .claude/skills/config/SKILL.md"
+    notes: "Created skills/cs_config.md and .claude/skills/cs_config/SKILL.md"
   - id: 6
-    name: "/analyze skill"
+    name: "/cs_analyze skill"
     status: completed
     depends_on: [2, 3, 4]
     started_at: "2026-04-12T22:15:00Z"
     completed_at: "2026-04-12T22:30:00Z"
-    notes: "Created skills/analyze.md and .claude/skills/analyze/SKILL.md"
+    notes: "Created skills/cs_analyze.md and .claude/skills/cs_analyze/SKILL.md"
   - id: 7
-    name: "/scan skill"
+    name: "/cs_scan skill"
     status: completed
     depends_on: [2, 4]
     started_at: "2026-04-12T23:00:00Z"
     completed_at: "2026-04-12T23:20:00Z"
-    notes: "Created skills/scan.md and .claude/skills/scan/SKILL.md"
+    notes: "Created skills/cs_scan.md and .claude/skills/cs_scan/SKILL.md"
   - id: 8
-    name: "/bet skill"
+    name: "/cs_bet skill"
     status: completed
     depends_on: [2, 3, 4]
     started_at: "2026-04-12T23:30:00Z"
     completed_at: "2026-04-12T23:45:00Z"
-    notes: "Created skills/bet.md and .claude/skills/bet/SKILL.md"
+    notes: "Created skills/cs_bet.md and .claude/skills/cs_bet/SKILL.md"
   - id: 9
-    name: "/portfolio skill"
+    name: "/cs_portfolio skill"
     status: completed
     depends_on: [2, 4]
     started_at: "2026-04-13T00:00:00Z"
     completed_at: "2026-04-13T00:10:00Z"
-    notes: "Created skills/portfolio.md and .claude/skills/portfolio/SKILL.md"
+    notes: "Created skills/cs_portfolio.md and .claude/skills/cs_portfolio/SKILL.md"
   - id: 10
-    name: "/monitor skill"
+    name: "/cs_monitor skill"
     status: completed
     depends_on: [6, 9]
     started_at: "2026-04-13T00:15:00Z"
     completed_at: "2026-04-13T00:25:00Z"
-    notes: "Created skills/monitor.md and .claude/skills/monitor/SKILL.md"
+    notes: "Created skills/cs_monitor.md and .claude/skills/cs_monitor/SKILL.md"
   - id: 11
-    name: "/exit skill"
+    name: "/cs_exit skill"
     status: completed
     depends_on: [8]
     started_at: "2026-04-13T01:00:00Z"
     completed_at: "2026-04-13T01:15:00Z"
-    notes: "Created skills/exit.md and .claude/skills/exit/SKILL.md"
+    notes: "Created skills/cs_exit.md and .claude/skills/cs_exit/SKILL.md"
   - id: 12
-    name: "/journal skill"
+    name: "/cs_journal skill"
     status: completed
     depends_on: [2]
     started_at: "2026-04-13T01:30:00Z"
     completed_at: "2026-04-13T01:45:00Z"
-    notes: "Created skills/journal.md and .claude/skills/journal/SKILL.md"
+    notes: "Created skills/cs_journal.md and .claude/skills/cs_journal/SKILL.md"
   - id: 13
     name: "Integration testing & polish"
     status: completed
     depends_on: [5, 6, 7, 8, 9, 10, 11, 12]
     started_at: "2026-04-13T02:00:00Z"
     completed_at: "2026-04-13T02:30:00Z"
-    notes: "Fixed watchlist structure inconsistency in /scan (added event_slug), fixed misleading test docstring, updated pyproject.toml build backend, created docs/USAGE.md. All 84 tests pass."
+    notes: "Fixed watchlist structure inconsistency in /cs_scan (added event_slug), fixed misleading test docstring, updated pyproject.toml build backend, created docs/USAGE.md. All 84 tests pass."
   - id: 14
     name: "README.md"
     status: completed
