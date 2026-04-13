@@ -11,15 +11,24 @@ Claudshi connects to Kalshi via the [kalshi-mcp](https://github.com/regnull/kals
 - A [Kalshi](https://kalshi.com/) account with API credentials
 - Python 3.11+
 
-## Setup
+## Installation
 
-1. **Install kalshi-mcp:**
+### Option 1: Claude Code CLI
+
+1. **Clone the repo:**
+
+   ```bash
+   git clone https://github.com/regnull/claudshi.git
+   cd claudshi
+   ```
+
+2. **Install kalshi-mcp:**
 
    ```bash
    pip install git+https://github.com/regnull/kalshi-mcp.git
    ```
 
-2. **Configure API credentials** in `.mcp.json`:
+3. **Configure API credentials** in `.mcp.json`:
 
    ```json
    {
@@ -36,17 +45,72 @@ Claudshi connects to Kalshi via the [kalshi-mcp](https://github.com/regnull/kals
    }
    ```
 
-3. **Install Python dependencies:**
+4. **Install Python dependencies:**
 
    ```bash
    pip install -e ".[dev]"
    ```
 
-4. **Verify setup:**
+5. **Run Claude Code from the project directory:**
+
+   ```bash
+   claude
+   ```
+
+6. **Verify setup:**
 
    ```
    /cs_config
    ```
+
+### Option 2: Claude Desktop
+
+To use Claudshi inside [Claude Desktop](https://claude.ai/download), you need to configure the MCP server and point Claude Desktop at the project.
+
+1. **Clone the repo and install dependencies** (same as steps 1–4 above).
+
+2. **Install kalshi-mcp globally** so Claude Desktop can find it:
+
+   ```bash
+   pip install git+https://github.com/regnull/kalshi-mcp.git
+   ```
+
+   Make sure `kalshi-mcp` is on your system PATH. Verify with:
+
+   ```bash
+   which kalshi-mcp
+   ```
+
+3. **Add the MCP server to Claude Desktop.** Open Claude Desktop settings (gear icon > Developer > Edit Config), and add the `kalshi-mcp` server to `claude_desktop_config.json`:
+
+   ```json
+   {
+     "mcpServers": {
+       "kalshi-mcp": {
+         "command": "kalshi-mcp",
+         "args": [],
+         "env": {
+           "KALSHI_API_KEY": "<your-kalshi-api-key>",
+           "KALSHI_PRIVATE_KEY_PATH": "<absolute-path-to-your-private-key>"
+         }
+       }
+     }
+   }
+   ```
+
+   **Important:** Use the absolute path to your private key file (e.g., `/Users/yourname/secret/kalshi_private_key.pem`).
+
+4. **Restart Claude Desktop** for the MCP server to load. You should see a hammer icon in the chat input indicating MCP tools are available.
+
+5. **Use the Kalshi tools directly.** In Claude Desktop, you can ask Claude to use the Kalshi MCP tools (e.g., "get my Kalshi balance", "show me political markets on Kalshi"). Note that the `/cs_*` slash commands are only available in Claude Code — in Claude Desktop, describe what you want in plain language and Claude will use the MCP tools directly.
+
+### Kalshi API Credentials
+
+You need a Kalshi account with API access:
+
+1. Log in to [Kalshi](https://kalshi.com/) and go to **Settings > API Keys**.
+2. Create a new API key and download the private key file.
+3. Use the API key ID and the path to the private key file in the configuration above.
 
 ## Commands
 
