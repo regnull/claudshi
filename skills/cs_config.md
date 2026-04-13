@@ -1,26 +1,16 @@
----
-name: config
-description: View or update Claudshi plugin settings (risk limits, edge thresholds, categories). Use when managing configuration.
-disable-model-invocation: true
-argument-hint: "[key value | reset]"
-allowed-tools: Read Write Bash
----
-
-# /config — View or Update Plugin Settings
+# /cs_config — View or Update Plugin Settings
 
 ## Usage
 
 ```
-/config                      # Show all current settings
-/config <key> <value>        # Update a single setting
-/config reset                # Restore all defaults
+/cs_config                      # Show all current settings
+/cs_config <key> <value>        # Update a single setting
+/cs_config reset                # Restore all defaults
 ```
 
 ## Instructions
 
-The user's arguments: $ARGUMENTS
-
-When the user invokes `/config`, follow these steps based on the arguments provided.
+When the user invokes `/cs_config`, follow these steps based on the arguments provided.
 
 ### No Arguments — Show Settings
 

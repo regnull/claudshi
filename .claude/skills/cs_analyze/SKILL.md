@@ -6,25 +6,25 @@ argument-hint: "<market-url-or-ticker>"
 allowed-tools: Read Write Bash WebSearch WebFetch mcp__kalshi-mcp__get_market mcp__kalshi-mcp__get_event mcp__kalshi-mcp__get_markets mcp__kalshi-mcp__get_market_orderbook mcp__kalshi-mcp__get_trades mcp__kalshi-mcp__get_market_candlesticks mcp__kalshi-mcp__lookup_event mcp__kalshi-mcp__get_series
 ---
 
-# /analyze — Deep Political Event Analysis
+# /cs_analyze — Deep Political Event Analysis
 
 ## Usage
 
 ```
-/analyze <market-url-or-ticker>
+/cs_analyze <market-url-or-ticker>
 ```
 
 Examples:
 ```
-/analyze KXUSAIRANAGREEMENT-27
-/analyze https://kalshi.com/markets/kxusairanagreement/us-iran-agreement
+/cs_analyze KXUSAIRANAGREEMENT-27
+/cs_analyze https://kalshi.com/markets/kxusairanagreement/us-iran-agreement
 ```
 
 ## Instructions
 
 The user's arguments: $ARGUMENTS
 
-When the user invokes `/analyze`, follow **every** step below in order. Do not skip steps.
+When the user invokes `/cs_analyze`, follow **every** step below in order. Do not skip steps.
 
 ---
 
@@ -311,8 +311,8 @@ Display:
 4. **Edge** vs. market price.
 5. **Factor scores** (the table from your analysis).
 6. **Recommendation** — one of:
-   - **Trade**: there is sufficient edge. Show the recommended side (YES/NO), suggested bet size (from Kelly), and suggested price. Tell the user to run `/bet <ticker> <side> <amount>` to execute.
-   - **Watch**: edge is close to threshold or confidence is low. Add to watchlist. Tell the user the market has been added to the watchlist and `/monitor` will track it.
+   - **Trade**: there is sufficient edge. Show the recommended side (YES/NO), suggested bet size (from Kelly), and suggested price. Tell the user to run `/cs_bet <ticker> <side> <amount>` to execute.
+   - **Watch**: edge is close to threshold or confidence is low. Add to watchlist. Tell the user the market has been added to the watchlist and `/cs_monitor` will track it.
    - **Pass**: no edge or market is unsuitable. Explain why.
 
 If the recommendation is **Watch**, also add to the watchlist:
@@ -336,7 +336,7 @@ save_watchlist(watchlist)
 
 ## Important Notes
 
-- **Never place trades from this skill.** Only recommend. The user must use `/bet` to execute.
+- **Never place trades from this skill.** Only recommend. The user must use `/cs_bet` to execute.
 - **Always save all memory files** before presenting the summary. If file writing fails, report the error.
 - **Be calibrated.** Avoid overconfidence. Use base rates. Assign confidence levels honestly.
 - **Show your work.** Every probability comes with structured reasoning.

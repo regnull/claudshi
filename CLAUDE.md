@@ -12,14 +12,14 @@ See `docs/PROMPT.md` for the full specification, architecture, and task definiti
 
 | Command | Description |
 |---------|-------------|
-| `/config [key value \| reset]` | View or update plugin settings |
-| `/analyze <market-url-or-ticker>` | Deep analysis of a political market |
-| `/scan [category]` | Scan for mispriced political markets |
-| `/bet <ticker> <side> <amount> [price]` | Place a trade (requires prior analysis) |
-| `/portfolio` | View current portfolio and P&L |
-| `/monitor` | Check all tracked markets for updates |
-| `/exit <ticker> [amount]` | Close or reduce a position |
-| `/journal [date]` | View or generate daily journal entry |
+| `/cs_config [key value \| reset]` | View or update plugin settings |
+| `/cs_analyze <market-url-or-ticker>` | Deep analysis of a political market |
+| `/cs_scan [category]` | Scan for mispriced political markets |
+| `/cs_bet <ticker> <side> <amount> [price]` | Place a trade (requires prior analysis) |
+| `/cs_portfolio` | View current portfolio and P&L |
+| `/cs_monitor` | Check all tracked markets for updates |
+| `/cs_exit <ticker> [amount]` | Close or reduce a position |
+| `/cs_journal [date]` | View or generate daily journal entry |
 
 ## Memory System (`.claudshi/`)
 

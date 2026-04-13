@@ -1,9 +1,9 @@
-# /exit — Close or Reduce a Position
+# /cs_exit — Close or Reduce a Position
 
 ## Usage
 
 ```
-/exit <ticker> [amount]
+/cs_exit <ticker> [amount]
 ```
 
 - `ticker`: Market ticker (e.g., `KXUSAIRANAGREEMENT-27`)
@@ -11,13 +11,13 @@
 
 Examples:
 ```
-/exit KXUSAIRANAGREEMENT-27
-/exit KXUSAIRANAGREEMENT-27 10
+/cs_exit KXUSAIRANAGREEMENT-27
+/cs_exit KXUSAIRANAGREEMENT-27 10
 ```
 
 ## Instructions
 
-When the user invokes `/exit`, follow **every** step below in order. Do not skip steps.
+When the user invokes `/cs_exit`, follow **every** step below in order. Do not skip steps.
 
 ---
 
@@ -209,7 +209,7 @@ If full exit, add an additional action entry:
 
 #### 8.4 Update Portfolio Summary
 
-Update `.claudshi/portfolio/summary.yaml`:
+Update `.claudshi/cs_portfolio/summary.yaml`:
 
 - If full exit: remove the ticker from positions.
 - If partial exit: update the position's quantity and total cost.
@@ -234,8 +234,8 @@ Display the result:
 <position details or "Position fully closed.">
 
 ### Next Steps
-- Run `/portfolio` to see your updated portfolio
-- Run `/journal` to record this exit
+- Run `/cs_portfolio` to see your updated portfolio
+- Run `/cs_journal` to record this exit
 ```
 
 ---

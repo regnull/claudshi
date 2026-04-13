@@ -6,12 +6,12 @@ argument-hint: "<ticker> [amount]"
 allowed-tools: Read Write Bash Glob Grep mcp__kalshi-mcp__get_market mcp__kalshi-mcp__get_market_orderbook mcp__kalshi-mcp__get_balance mcp__kalshi-mcp__get_positions mcp__kalshi-mcp__create_order mcp__kalshi-mcp__get_fills mcp__kalshi-mcp__get_orders
 ---
 
-# /exit — Close or Reduce a Position
+# /cs_exit — Close or Reduce a Position
 
 ## Usage
 
 ```
-/exit <ticker> [amount]
+/cs_exit <ticker> [amount]
 ```
 
 - `ticker`: Market ticker (e.g., `KXUSAIRANAGREEMENT-27`)
@@ -19,15 +19,15 @@ allowed-tools: Read Write Bash Glob Grep mcp__kalshi-mcp__get_market mcp__kalshi
 
 Examples:
 ```
-/exit KXUSAIRANAGREEMENT-27
-/exit KXUSAIRANAGREEMENT-27 10
+/cs_exit KXUSAIRANAGREEMENT-27
+/cs_exit KXUSAIRANAGREEMENT-27 10
 ```
 
 ## Instructions
 
 The user's arguments: $ARGUMENTS
 
-When the user invokes `/exit`, follow **every** step below in order. Do not skip steps.
+When the user invokes `/cs_exit`, follow **every** step below in order. Do not skip steps.
 
 ---
 
@@ -363,7 +363,7 @@ if remaining_quantity == 0:
 
 #### 8.4 Update Portfolio Summary
 
-Update `.claudshi/portfolio/summary.yaml`:
+Update `.claudshi/cs_portfolio/summary.yaml`:
 
 ```python
 summary = load_portfolio_summary()
@@ -405,8 +405,8 @@ After all memory files are updated, display:
 <"<N> contracts at <XX> cents avg" or "Position fully closed.">
 
 ### Next Steps
-- Run `/portfolio` to see your updated portfolio
-- Run `/journal` to record this exit
+- Run `/cs_portfolio` to see your updated portfolio
+- Run `/cs_journal` to record this exit
 ```
 
 ---

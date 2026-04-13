@@ -1,16 +1,16 @@
-# /portfolio — View Current Portfolio and P&L
+# /cs_portfolio — View Current Portfolio and P&L
 
 ## Usage
 
 ```
-/portfolio
+/cs_portfolio
 ```
 
 No arguments. Displays all open positions, per-position P&L, aggregate totals, and cash balance.
 
 ## Instructions
 
-When the user invokes `/portfolio`, follow **every** step below in order.
+When the user invokes `/cs_portfolio`, follow **every** step below in order.
 
 ---
 
@@ -107,7 +107,7 @@ After displaying the portfolio, update the memory system.
 
 #### 5.1 Update Portfolio Summary
 
-Write to `.claudshi/portfolio/summary.yaml`:
+Write to `.claudshi/cs_portfolio/summary.yaml`:
 
 ```python
 import sys; sys.path.insert(0, "lib")
@@ -144,7 +144,7 @@ save_portfolio_summary(summary)
 
 #### 5.2 Append Balance Log
 
-Append a snapshot to `.claudshi/portfolio/balance_log.csv`:
+Append a snapshot to `.claudshi/cs_portfolio/balance_log.csv`:
 
 ```python
 from memory import append_balance_log
@@ -172,7 +172,7 @@ The following positions are tracked locally but not found on Kalshi. They may ha
 |--------|------|-----|--------|
 | TICKER | YES | 50 | Not found on Kalshi |
 
-Run `/monitor` to update these, or manually remove them from `.claudshi/`.
+Run `/cs_monitor` to update these, or manually remove them from `.claudshi/`.
 ```
 
 To find local positions, scan `.claudshi/events/*/markets/*/position.yaml` for files where `quantity > 0`.

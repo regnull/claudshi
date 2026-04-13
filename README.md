@@ -45,31 +45,31 @@ Claudshi connects to Kalshi via the [kalshi-mcp](https://github.com/regnull/kals
 4. **Verify setup:**
 
    ```
-   /config
+   /cs_config
    ```
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `/config [key value \| reset]` | View or update plugin settings |
-| `/analyze <market-url-or-ticker>` | Deep analysis of a political market |
-| `/scan [category]` | Scan for mispriced political markets |
-| `/bet <ticker> <side> <amount> [price]` | Place a trade (requires prior analysis) |
-| `/portfolio` | View current portfolio and P&L |
-| `/monitor` | Check all tracked markets for updates |
-| `/exit <ticker> [amount]` | Close or reduce a position |
-| `/journal [date]` | View or generate daily journal entry |
+| `/cs_config [key value \| reset]` | View or update plugin settings |
+| `/cs_analyze <market-url-or-ticker>` | Deep analysis of a political market |
+| `/cs_scan [category]` | Scan for mispriced political markets |
+| `/cs_bet <ticker> <side> <amount> [price]` | Place a trade (requires prior analysis) |
+| `/cs_portfolio` | View current portfolio and P&L |
+| `/cs_monitor` | Check all tracked markets for updates |
+| `/cs_exit <ticker> [amount]` | Close or reduce a position |
+| `/cs_journal [date]` | View or generate daily journal entry |
 
 ## Typical Workflow
 
 ```
-/scan                          # Find mispriced markets
-/analyze KXSOMEMARKET-25       # Deep-dive a candidate
-/bet KXSOMEMARKET-25 YES 25    # Place a trade (with confirmation)
-/monitor                       # Check positions periodically
-/exit KXSOMEMARKET-25          # Close when done
-/journal                       # Record the day's activity
+/cs_scan                          # Find mispriced markets
+/cs_analyze KXSOMEMARKET-25       # Deep-dive a candidate
+/cs_bet KXSOMEMARKET-25 YES 25    # Place a trade (with confirmation)
+/cs_monitor                       # Check positions periodically
+/cs_exit KXSOMEMARKET-25          # Close when done
+/cs_journal                       # Record the day's activity
 ```
 
 ## How It Works
@@ -125,7 +125,7 @@ All state is stored in the `.claudshi/` directory so Claude can resume work acro
 
 ## Configuration
 
-Default settings (adjust with `/config`):
+Default settings (adjust with `/cs_config`):
 
 | Setting | Default | Description |
 |---------|---------|-------------|

@@ -30,15 +30,15 @@ You can obtain API credentials from your [Kalshi account settings](https://kalsh
 
 ### 3. Verify Setup
 
-Run `/config` to confirm the plugin loads correctly and displays default settings.
+Run `/cs_config` to confirm the plugin loads correctly and displays default settings.
 
 ### 4. Find Your First Opportunity
 
-Run `/scan` to scan political prediction markets for mispriced opportunities:
+Run `/cs_scan` to scan political prediction markets for mispriced opportunities:
 
 ```
-/scan              # Scan all default categories
-/scan elections    # Scan a specific category
+/cs_scan              # Scan all default categories
+/cs_scan elections    # Scan a specific category
 ```
 
 ## Example Workflow
@@ -48,7 +48,7 @@ A typical session follows this flow: **scan** for opportunities, **analyze** pro
 ### Step 1: Scan for Opportunities
 
 ```
-/scan
+/cs_scan
 ```
 
 This fetches active political events from Kalshi, performs quick probability estimates, and ranks markets by estimated edge. Markets with sufficient edge are added to your watchlist.
@@ -58,7 +58,7 @@ This fetches active political events from Kalshi, performs quick probability est
 Pick a high-edge market from the scan results and run a deep analysis:
 
 ```
-/analyze KXUSAIRANAGREEMENT-27
+/cs_analyze KXUSAIRANAGREEMENT-27
 ```
 
 This performs a full structured analysis: event decomposition, base rate analysis, factor scoring, probability synthesis, and edge calculation. The result is saved to the memory system and includes a recommendation (Trade, Watch, or Pass).
@@ -68,7 +68,7 @@ This performs a full structured analysis: event decomposition, base rate analysi
 If the analysis recommends a trade, place a bet:
 
 ```
-/bet KXUSAIRANAGREEMENT-27 YES 25
+/cs_bet KXUSAIRANAGREEMENT-27 YES 25
 ```
 
 This validates the trade against risk limits, shows a confirmation prompt with full details (edge, risk checks, portfolio impact), and waits for your explicit approval before executing.
@@ -76,7 +76,7 @@ This validates the trade against risk limits, shows a confirmation prompt with f
 You can also specify a limit price:
 
 ```
-/bet KXUSAIRANAGREEMENT-27 YES 25 28
+/cs_bet KXUSAIRANAGREEMENT-27 YES 25 28
 ```
 
 ### Step 4: Monitor Your Positions
@@ -84,7 +84,7 @@ You can also specify a limit price:
 Run the monitor periodically (recommended every 12 hours) to check for changes:
 
 ```
-/monitor
+/cs_monitor
 ```
 
 This checks all your positions and watchlist markets for news, price changes, and material developments. It performs incremental analysis updates and recommends actions (Hold, Add, Reduce, Exit, Enter).
@@ -94,19 +94,19 @@ This checks all your positions and watchlist markets for news, price changes, an
 When it's time to close a position:
 
 ```
-/exit KXUSAIRANAGREEMENT-27          # Full exit
-/exit KXUSAIRANAGREEMENT-27 10       # Partial exit (10 contracts)
+/cs_exit KXUSAIRANAGREEMENT-27          # Full exit
+/cs_exit KXUSAIRANAGREEMENT-27 10       # Partial exit (10 contracts)
 ```
 
 ### Other Useful Commands
 
 ```
-/portfolio          # View all positions, P&L, and account balance
-/journal            # Generate today's journal entry
-/journal 2026-04-12 # Read a past journal entry
-/config             # View current settings
-/config max_single_bet_usd 100   # Change a setting
-/config reset       # Restore all defaults
+/cs_portfolio          # View all positions, P&L, and account balance
+/cs_journal            # Generate today's journal entry
+/cs_journal 2026-04-12 # Read a past journal entry
+/cs_config             # View current settings
+/cs_config max_single_bet_usd 100   # Change a setting
+/cs_config reset       # Restore all defaults
 ```
 
 ## Memory System
@@ -144,10 +144,10 @@ All memory files are human-readable. YAML files contain structured data, and Mar
 
 ```bash
 # View current config
-cat .claudshi/config.yaml
+cat .claudshi/cs_config.yaml
 
 # Check your portfolio
-cat .claudshi/portfolio/summary.yaml
+cat .claudshi/cs_portfolio/summary.yaml
 
 # Read an analysis
 cat .claudshi/events/kxusairanagreement/markets/KXUSAIRANAGREEMENT-27/analysis/2026-04-12-initial.md
@@ -159,7 +159,7 @@ cat .claudshi/events/kxusairanagreement/markets/KXUSAIRANAGREEMENT-27/probabilit
 cat .claudshi/watchlist.yaml
 
 # Read today's journal
-cat .claudshi/journal/2026-04-12.md
+cat .claudshi/cs_journal/2026-04-12.md
 ```
 
 ### File Conventions
@@ -182,4 +182,4 @@ Claudshi enforces these risk rules on every trade:
 6. Uses quarter-Kelly position sizing for conservative risk management
 7. Warns if more than 40% of portfolio is concentrated in a single event
 
-All limits are configurable via `/config`.
+All limits are configurable via `/cs_config`.

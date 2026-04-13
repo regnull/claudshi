@@ -290,7 +290,7 @@ actions:
    - `get_market_dir(event_slug, ticker)` → Path — return the path for a market directory.
    - `get_analysis_path(event_slug, ticker, date, update_num=None)` → Path — return the path for an analysis file.
    - `get_next_update_num(event_slug, ticker, date)` → int — scan existing updates and return the next number.
-   - `load_config()` → dict — load `.claudshi/config.yaml`, returning defaults if missing.
+   - `load_config()` → dict — load `.claudshi/cs_config.yaml`, returning defaults if missing.
    - `save_config(data)` — write config.
    - `load_watchlist()` → list — load `.claudshi/watchlist.yaml`.
    - `save_watchlist(data)` — write watchlist.
@@ -363,16 +363,16 @@ actions:
 
 ---
 
-### Task 5: `/config` Skill
+### Task 5: `/cs_config` Skill
 
 **Depends on:** [2]
 
-**Goal:** Implement the `/config` slash command skill.
+**Goal:** Implement the `/cs_config` slash command skill.
 
 **Work:**
-1. Create `skills/config.md` — the skill prompt that Claude follows when the user invokes `/config`.
+1. Create `skills/cs_config.md` — the skill prompt that Claude follows when the user invokes `/cs_config`.
 2. The skill must:
-   - If invoked with no arguments: display all current settings from `.claudshi/config.yaml` (or defaults if file doesn't exist).
+   - If invoked with no arguments: display all current settings from `.claudshi/cs_config.yaml` (or defaults if file doesn't exist).
    - If invoked with `<key> <value>`: update that setting and save.
    - If invoked with `reset`: restore all defaults and save.
    - Show defaults alongside current values so the user can see what changed.
@@ -387,20 +387,20 @@ actions:
 4. Register the skill in `CLAUDE.md` (add it to the slash command list).
 
 **Acceptance criteria:**
-- `skills/config.md` exists and contains clear instructions.
-- Invoking `/config` shows settings. Invoking `/config max_single_bet_usd 100` updates the value. Invoking `/config reset` restores defaults.
-- `CLAUDE.md` lists `/config` as an available command.
+- `skills/cs_config.md` exists and contains clear instructions.
+- Invoking `/cs_config` shows settings. Invoking `/cs_config max_single_bet_usd 100` updates the value. Invoking `/cs_config reset` restores defaults.
+- `CLAUDE.md` lists `/cs_config` as an available command.
 
 ---
 
-### Task 6: `/analyze` Skill
+### Task 6: `/cs_analyze` Skill
 
 **Depends on:** [2, 3, 4]
 
-**Goal:** Implement the `/analyze` slash command for deep political event analysis.
+**Goal:** Implement the `/cs_analyze` slash command for deep political event analysis.
 
 **Work:**
-1. Create `skills/analyze.md` — the skill prompt for `/analyze <market-url-or-ticker>`.
+1. Create `skills/cs_analyze.md` — the skill prompt for `/cs_analyze <market-url-or-ticker>`.
 2. The skill must instruct Claude to:
    - Parse the input (accept a full Kalshi URL or just a ticker).
    - Call `get_market` to fetch market data.
@@ -419,21 +419,21 @@ actions:
 3. Register in `CLAUDE.md`.
 
 **Acceptance criteria:**
-- `skills/analyze.md` exists with complete instructions covering all steps above.
+- `skills/cs_analyze.md` exists with complete instructions covering all steps above.
 - The skill references the Analysis Framework from the Reference section.
 - The skill specifies exact file paths and formats for all saved output.
-- `CLAUDE.md` lists `/analyze`.
+- `CLAUDE.md` lists `/cs_analyze`.
 
 ---
 
-### Task 7: `/scan` Skill
+### Task 7: `/cs_scan` Skill
 
 **Depends on:** [2, 4]
 
-**Goal:** Implement the `/scan` skill for finding mispriced political markets.
+**Goal:** Implement the `/cs_scan` skill for finding mispriced political markets.
 
 **Work:**
-1. Create `skills/scan.md` — the skill prompt for `/scan [category]`.
+1. Create `skills/cs_scan.md` — the skill prompt for `/cs_scan [category]`.
 2. The skill must instruct Claude to:
    - Call `get_events` with appropriate filters (category if provided, or default categories from config).
    - For each event, call `get_markets` to get market details.
@@ -449,25 +449,25 @@ actions:
 3. Register in `CLAUDE.md`.
 
 **Acceptance criteria:**
-- `skills/scan.md` exists with complete instructions.
+- `skills/cs_scan.md` exists with complete instructions.
 - The skill handles both category-filtered and unfiltered scans.
 - Output is a ranked table. Watchlist is updated.
-- `CLAUDE.md` lists `/scan`.
+- `CLAUDE.md` lists `/cs_scan`.
 
 ---
 
-### Task 8: `/bet` Skill
+### Task 8: `/cs_bet` Skill
 
 **Depends on:** [2, 3, 4]
 
-**Goal:** Implement the `/bet` skill for placing trades.
+**Goal:** Implement the `/cs_bet` skill for placing trades.
 
 **Work:**
-1. Create `skills/bet.md` — the skill prompt for `/bet <market-ticker> <side> <amount> [price]`.
+1. Create `skills/cs_bet.md` — the skill prompt for `/cs_bet <market-ticker> <side> <amount> [price]`.
 2. The skill must instruct Claude to:
    - Parse and validate inputs (`side` = YES/NO, `amount` in USD, `price` optional).
    - Fetch current market data and orderbook.
-   - Load our existing probability estimate for this market (error if no analysis exists — tell user to run `/analyze` first).
+   - Load our existing probability estimate for this market (error if no analysis exists — tell user to run `/cs_analyze` first).
    - Run all risk checks (from `lib/risk.py` logic): max bet, max position, max exposure, expiry, concentration.
    - Present a trade confirmation using `format_trade_confirmation`:
      - Market title and current price.
@@ -482,22 +482,22 @@ actions:
 3. Register in `CLAUDE.md`.
 
 **Acceptance criteria:**
-- `skills/bet.md` exists with complete instructions.
+- `skills/cs_bet.md` exists with complete instructions.
 - The skill requires an existing analysis before allowing a bet.
 - The skill enforces all risk rules and requires user confirmation.
 - All memory files are updated on execution.
-- `CLAUDE.md` lists `/bet`.
+- `CLAUDE.md` lists `/cs_bet`.
 
 ---
 
-### Task 9: `/portfolio` Skill
+### Task 9: `/cs_portfolio` Skill
 
 **Depends on:** [2, 4]
 
-**Goal:** Implement the `/portfolio` skill for viewing portfolio state.
+**Goal:** Implement the `/cs_portfolio` skill for viewing portfolio state.
 
 **Work:**
-1. Create `skills/portfolio.md` — the skill prompt for `/portfolio`.
+1. Create `skills/cs_portfolio.md` — the skill prompt for `/cs_portfolio`.
 2. The skill must instruct Claude to:
    - Call `get_balance` to get current account balance.
    - Call `get_positions` to get all open positions.
@@ -509,21 +509,21 @@ actions:
 3. Register in `CLAUDE.md`.
 
 **Acceptance criteria:**
-- `skills/portfolio.md` exists with complete instructions.
+- `skills/cs_portfolio.md` exists with complete instructions.
 - Output shows per-position and aggregate data.
 - Memory files are updated.
-- `CLAUDE.md` lists `/portfolio`.
+- `CLAUDE.md` lists `/cs_portfolio`.
 
 ---
 
-### Task 10: `/monitor` Skill
+### Task 10: `/cs_monitor` Skill
 
 **Depends on:** [6, 9]
 
-**Goal:** Implement the `/monitor` skill for ongoing contract maintenance.
+**Goal:** Implement the `/cs_monitor` skill for ongoing contract maintenance.
 
 **Work:**
-1. Create `skills/monitor.md` — the skill prompt for `/monitor`.
+1. Create `skills/cs_monitor.md` — the skill prompt for `/cs_monitor`.
 2. The skill must instruct Claude to:
    - Scan `.claudshi/events/` for all tracked markets.
    - Load `watchlist.yaml` for watched-but-not-traded markets.
@@ -544,23 +544,23 @@ actions:
 3. Register in `CLAUDE.md`.
 
 **Acceptance criteria:**
-- `skills/monitor.md` exists with complete instructions.
+- `skills/cs_monitor.md` exists with complete instructions.
 - The skill handles both positioned and watched markets.
 - Analysis updates are incremental, not full re-analyses.
 - Recommendations are actionable (with suggested order details for Add/Enter).
 - Journal entry is generated.
-- `CLAUDE.md` lists `/monitor`.
+- `CLAUDE.md` lists `/cs_monitor`.
 
 ---
 
-### Task 11: `/exit` Skill
+### Task 11: `/cs_exit` Skill
 
 **Depends on:** [8]
 
-**Goal:** Implement the `/exit` skill for closing positions.
+**Goal:** Implement the `/cs_exit` skill for closing positions.
 
 **Work:**
-1. Create `skills/exit.md` — the skill prompt for `/exit <market-ticker> [amount]`.
+1. Create `skills/cs_exit.md` — the skill prompt for `/cs_exit <market-ticker> [amount]`.
 2. The skill must instruct Claude to:
    - Load current position from memory (`position.yaml`).
    - Error if no position exists for this ticker.
@@ -580,38 +580,38 @@ actions:
 3. Register in `CLAUDE.md`.
 
 **Acceptance criteria:**
-- `skills/exit.md` exists with complete instructions.
+- `skills/cs_exit.md` exists with complete instructions.
 - Handles both full and partial exits.
 - Requires user confirmation.
 - All memory files are updated.
-- `CLAUDE.md` lists `/exit`.
+- `CLAUDE.md` lists `/cs_exit`.
 
 ---
 
-### Task 12: `/journal` Skill
+### Task 12: `/cs_journal` Skill
 
 **Depends on:** [2]
 
-**Goal:** Implement the `/journal` skill for daily journal entries.
+**Goal:** Implement the `/cs_journal` skill for daily journal entries.
 
 **Work:**
-1. Create `skills/journal.md` — the skill prompt for `/journal [date]`.
+1. Create `skills/cs_journal.md` — the skill prompt for `/cs_journal [date]`.
 2. The skill must instruct Claude to:
-   - If a date is provided, read and display that day's journal from `.claudshi/journal/<YYYY-MM-DD>.md`.
+   - If a date is provided, read and display that day's journal from `.claudshi/cs_journal/<YYYY-MM-DD>.md`.
    - If no date is provided, generate today's journal:
      - Summarize all current positions and their P&L.
      - Note any market movements since last journal.
      - List actions taken today (from `actions_log.yaml` files).
      - Note any news developments.
      - Record lessons learned or observations.
-   - Save to `.claudshi/journal/<YYYY-MM-DD>.md`.
+   - Save to `.claudshi/cs_journal/<YYYY-MM-DD>.md`.
 3. Register in `CLAUDE.md`.
 
 **Acceptance criteria:**
-- `skills/journal.md` exists with complete instructions.
+- `skills/cs_journal.md` exists with complete instructions.
 - Reading existing journals works.
 - Generated journals contain position summary, actions, and observations.
-- `CLAUDE.md` lists `/journal`.
+- `CLAUDE.md` lists `/cs_journal`.
 
 ---
 
@@ -631,7 +631,7 @@ actions:
    - Does it explain the memory system clearly?
    - Does it mention the MCP server dependency?
 3. Create a `docs/USAGE.md` with:
-   - Quick start guide (install kalshi-mcp, configure API keys, run first `/scan`).
+   - Quick start guide (install kalshi-mcp, configure API keys, run first `/cs_scan`).
    - Example workflow: scan → analyze → bet → monitor → exit.
    - Explanation of the memory directory and how to inspect it.
 4. Verify all Python tests pass.
@@ -685,56 +685,56 @@ tasks:
     completed_at: null
     notes: ""
   - id: 5
-    name: "/config skill"
+    name: "/cs_config skill"
     status: pending
     depends_on: [2]
     started_at: null
     completed_at: null
     notes: ""
   - id: 6
-    name: "/analyze skill"
+    name: "/cs_analyze skill"
     status: pending
     depends_on: [2, 3, 4]
     started_at: null
     completed_at: null
     notes: ""
   - id: 7
-    name: "/scan skill"
+    name: "/cs_scan skill"
     status: pending
     depends_on: [2, 4]
     started_at: null
     completed_at: null
     notes: ""
   - id: 8
-    name: "/bet skill"
+    name: "/cs_bet skill"
     status: pending
     depends_on: [2, 3, 4]
     started_at: null
     completed_at: null
     notes: ""
   - id: 9
-    name: "/portfolio skill"
+    name: "/cs_portfolio skill"
     status: pending
     depends_on: [2, 4]
     started_at: null
     completed_at: null
     notes: ""
   - id: 10
-    name: "/monitor skill"
+    name: "/cs_monitor skill"
     status: pending
     depends_on: [6, 9]
     started_at: null
     completed_at: null
     notes: ""
   - id: 11
-    name: "/exit skill"
+    name: "/cs_exit skill"
     status: pending
     depends_on: [8]
     started_at: null
     completed_at: null
     notes: ""
   - id: 12
-    name: "/journal skill"
+    name: "/cs_journal skill"
     status: pending
     depends_on: [2]
     started_at: null
@@ -755,18 +755,18 @@ tasks:
 Task 1: Project scaffolding
   └─► Task 2: Memory system helpers
         ├─► Task 3: Risk management module
-        │     ├─► Task 6: /analyze skill ◄─── Task 4
-        │     └─► Task 8: /bet skill ◄─────── Task 4
+        │     ├─► Task 6: /cs_analyze skill ◄─── Task 4
+        │     └─► Task 8: /cs_bet skill ◄─────── Task 4
         ├─► Task 4: Output formatting module
-        │     ├─► Task 6: /analyze skill ◄─── Task 3
-        │     ├─► Task 7: /scan skill
-        │     ├─► Task 8: /bet skill ◄─────── Task 3
-        │     └─► Task 9: /portfolio skill
-        ├─► Task 5: /config skill
-        └─► Task 12: /journal skill
+        │     ├─► Task 6: /cs_analyze skill ◄─── Task 3
+        │     ├─► Task 7: /cs_scan skill
+        │     ├─► Task 8: /cs_bet skill ◄─────── Task 3
+        │     └─► Task 9: /cs_portfolio skill
+        ├─► Task 5: /cs_config skill
+        └─► Task 12: /cs_journal skill
 
-Task 6 + Task 9 ─► Task 10: /monitor skill
-Task 8 ──────────► Task 11: /exit skill
+Task 6 + Task 9 ─► Task 10: /cs_monitor skill
+Task 8 ──────────► Task 11: /cs_exit skill
 
 Tasks 5-12 ──────► Task 13: Integration testing & polish
 ```
