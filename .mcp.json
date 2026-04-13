@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "kalshi-mcp": {
+      "command": "kalshi-mcp",
+      "args": [],
+      "env": {
+        "KALSHI_API_KEY": "<your-kalshi-api-key>",
+        "KALSHI_PRIVATE_KEY_PATH": "<path-to-your-private-key>"
+      }
+    }
+  }
+}
